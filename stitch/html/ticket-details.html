@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800;900&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#001e41",
+                    "surface-container": "#ebeef0",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#9ccaff",
+                    "on-tertiary-fixed": "#022020",
+                    "outline": "#74777f",
+                    "secondary-container": "#46a8fe",
+                    "surface-tint": "#3a5f94",
+                    "tertiary-fixed": "#cae8e8",
+                    "surface-container-low": "#f1f4f6",
+                    "on-surface": "#181c1e",
+                    "tertiary": "#000708",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f7fafc",
+                    "secondary-fixed": "#d0e4ff",
+                    "on-secondary-fixed": "#001d35",
+                    "on-primary-fixed": "#001b3c",
+                    "primary-fixed": "#d5e3ff",
+                    "surface": "#f7fafc",
+                    "on-surface-variant": "#43474e",
+                    "surface-dim": "#d7dadc",
+                    "surface-container-high": "#e5e9eb",
+                    "inverse-surface": "#2d3133",
+                    "primary": "#000614",
+                    "on-secondary-container": "#003c65",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "background": "#f7fafc",
+                    "on-primary-container": "#6487bf",
+                    "on-primary": "#ffffff",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#304b4c",
+                    "on-secondary-fixed-variant": "#00497a",
+                    "inverse-primary": "#a7c8ff",
+                    "tertiary-container": "#042324",
+                    "on-background": "#181c1e",
+                    "on-primary-fixed-variant": "#1f477b",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#aecccc",
+                    "surface-variant": "#e0e3e5",
+                    "secondary": "#0062a1",
+                    "inverse-on-surface": "#eef1f3",
+                    "on-tertiary-container": "#6f8c8c",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#a7c8ff",
+                    "outline-variant": "#c4c6cf"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Public Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .ticket-mask {
+            mask-image: radial-gradient(circle at 0 50%, transparent 20px, black 21px), radial-gradient(circle at 100% 50%, transparent 20px, black 21px);
+            mask-composite: intersect;
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface antialiased">
+<!-- TopNavBar -->
+<nav class="sticky top-0 flex justify-between items-center w-full px-8 py-4 z-50 bg-white/70 backdrop-blur-xl dark:bg-slate-950/70 shadow-[0_8px_32px_0_rgba(0,31,63,0.04)]">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-black text-[#001F3F] dark:text-[#e0ffff] tracking-tighter">TixSigurado</span>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#001f3f] transition-all duration-300" href="#">Explore</a>
+<a class="text-[#001f3f] dark:text-[#e0ffff] font-bold border-b-2 border-[#6487bf] pb-1" href="#">My Tickets</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#001f3f] transition-all duration-300" href="#">Resell</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#001f3f] transition-all duration-300" href="#">Organizer</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<button class="material-symbols-outlined text-on-surface hover:bg-slate-100/50 p-2 rounded-full transition-all">account_balance_wallet</button>
+<button class="material-symbols-outlined text-on-surface hover:bg-slate-100/50 p-2 rounded-full transition-all">notifications</button>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-on-primary px-6 py-2.5 rounded-xl font-bold tracking-tight scale-95 active:scale-90 transition-transform">Connect Wallet</button>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-8 py-12 lg:py-20">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+<!-- Left Column: Focal Point - The Signature Ticket -->
+<div class="lg:col-span-7 flex flex-col gap-8">
+<div class="relative group">
+<!-- Glassmorphism Container -->
+<div class="relative z-10 bg-surface-container-lowest rounded-3xl overflow-hidden shadow-2xl transition-transform duration-500 hover:-rotate-1 border border-outline-variant/15">
+<!-- Ticket Header (Image) -->
+<div class="h-64 relative">
+<img alt="Event Hero" class="w-full h-full object-cover" data-alt="Wide shot of a massive indoor concert arena with dramatic blue and purple stage lighting and a silhouetted crowd" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqVG8-pGl1rR1lw4I5P6TI3hpzCW7uWMp0ZlVilvejIr3G-dYW6GRCW7sbTvfM3934wMwHURCGF1NqpVhldeZ2XhKm3Io3256nBf8XmjvgnV6OewNNAg1bWSf29zLTRH3T_MPAbEvRSvWDXt3l0OTwoabSAcaKGrn3aJRWyK2wFKizp-OcbOmaGBmitjoLNipAF6Ij3JnTqZbvq7dvdI6W3Z8o9B1IDXsoP9hB7FjtV02F1VDNt4KIBJq-A9L3rkOsyVxoYgAHhHY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute bottom-6 left-8">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 mb-2">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified_user</span> Verified Blockchain Asset
+                                </span>
+<h1 class="font-headline text-4xl font-black text-white tracking-tight">SOLAR ECLIPSE FESTIVAL 2024</h1>
+</div>
+</div>
+<!-- Ticket Body -->
+<div class="p-8 space-y-8">
+<div class="flex justify-between items-start border-b border-slate-100 pb-8">
+<div class="space-y-4">
+<div>
+<p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Date &amp; Time</p>
+<p class="text-lg font-bold text-on-surface">Friday, October 25 • 8:00 PM</p>
+</div>
+<div>
+<p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Location</p>
+<p class="text-lg font-bold text-on-surface">The Grand Atrium, New York</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-2xl flex flex-col items-center gap-2 border border-outline-variant/10">
+<p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Seat Row/No.</p>
+<p class="text-3xl font-black text-primary tracking-tighter">VIP-042</p>
+</div>
+</div>
+<!-- QR Code Focus -->
+<div class="flex flex-col md:flex-row items-center gap-10 bg-slate-50 rounded-2xl p-8 border border-slate-100">
+<div class="bg-white p-3 rounded-xl shadow-inner">
+<img alt="QR Code" class="w-40 h-40 object-contain mix-blend-multiply opacity-90" data-alt="A clean high-contrast QR code centered on a white square background with subtle digital grain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPXYtfqDBZ1xDFdYfNtU3-NJeHIvSH3IKs_NGWJSw186vbAth10r94lMaGpzmcv-BBFcKGWSkbqm6oQajnirecfA6MGGV4FQ1BcN2xyV05DjE9ai7lvNdmvLY7FMHyeaSHPz9TgzWGxzqUZDQhEGy9Lg4qnK5MeFkRaKF0WFN7jZlrU9joRLvQIvuk25msjLTc8DnHCLXrzXyyt8B4DYMz-rRTTVTdCaDoDdZgAh0faFh2C1jW-2O8MtCJj_HQXAJ5mPAQanBMfZ0"/>
+</div>
+<div class="flex-1 space-y-2 text-center md:text-left">
+<h3 class="text-xl font-bold text-on-surface">Your Entry Pass</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Present this dynamic QR code at the entrance. The ticket is cryptographically secured to your wallet.</p>
+<div class="pt-4 flex items-center justify-center md:justify-start gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></div>
+<span class="text-[10px] font-bold text-secondary tracking-widest uppercase">Live Blockchain Sync</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Aesthetic -->
+<div class="bg-primary px-8 py-4 flex justify-between items-center">
+<span class="text-on-primary/60 text-[10px] font-mono tracking-widest uppercase">TIX_ID: #8822-001F-3F94</span>
+<span class="text-on-primary/60 text-[10px] font-mono tracking-widest uppercase">SECURED BY TIXSIGURADO</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Metadata & Actions -->
+<div class="lg:col-span-5 space-y-8">
+<!-- Info Section -->
+<div class="bg-surface-container-low rounded-3xl p-8 border border-outline-variant/10 space-y-6">
+<h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface">Ticket Ownership</h2>
+<div class="space-y-4">
+<div class="flex justify-between items-center p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">person</span>
+<span class="text-sm font-medium text-on-surface-variant">Current Owner</span>
+</div>
+<span class="font-mono text-sm font-bold text-primary">0x8a...4f92</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface-container-lowest rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Original Price</p>
+<p class="text-xl font-bold text-on-surface">$249.00</p>
+</div>
+<div class="p-4 bg-surface-container-lowest rounded-xl">
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Max Resale</p>
+<p class="text-xl font-bold text-secondary">$299.00</p>
+</div>
+</div>
+<div class="flex justify-between items-center p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">repeat</span>
+<span class="text-sm font-medium text-on-surface-variant">Resale Count</span>
+</div>
+<span class="font-bold text-primary">0 Transfers</span>
+</div>
+</div>
+</div>
+<!-- Action Section -->
+<div class="space-y-4">
+<button class="w-full py-5 bg-primary text-on-primary rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:opacity-90 active:scale-[0.98]">
+<span class="material-symbols-outlined">send</span>
+                        Transfer Ticket
+                    </button>
+<button class="w-full py-5 bg-surface-container-highest text-on-surface rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:bg-surface-container-high active:scale-[0.98]">
+<span class="material-symbols-outlined">sell</span>
+                        Resell Ticket
+                    </button>
+<p class="text-center text-xs text-on-surface-variant px-8 leading-relaxed italic">
+                        All transactions are finalized on the blockchain. Smart contracts enforce fair resale pricing limits to prevent scalping.
+                    </p>
+</div>
+<!-- Trust Badge (Signature Component) -->
+<div class="bg-secondary-container/10 border border-secondary-container/20 rounded-2xl p-6 flex gap-4">
+<div class="bg-secondary-container text-on-secondary-container h-10 w-10 shrink-0 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div>
+<h4 class="font-bold text-on-secondary-container text-sm">Trust Built into Every Ticket</h4>
+<p class="text-xs text-on-secondary-container/80 mt-1">This ticket is a unique digital asset (NFT) with a verifiable chain of custody, ensuring 100% authenticity for the holder.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-900 border-t border-slate-200/15 dark:border-slate-800/15 w-full py-12 px-8">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto space-y-4 md:space-y-0">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-['Public_Sans'] font-bold text-lg text-slate-900 dark:text-slate-100">TixSigurado</span>
+<p class="font-['Inter'] text-sm leading-relaxed text-[#001f3f] dark:text-[#e0ffff]">© 2024 TixSigurado. Trust built into every ticket.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-sm font-['Inter'] transition-opacity hover:opacity-80" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-sm font-['Inter'] transition-opacity hover:opacity-80" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-sm font-['Inter'] transition-opacity hover:opacity-80" href="#">Verification</a>
+<a class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-sm font-['Inter'] transition-opacity hover:opacity-80" href="#">Support</a>
+</div>
+</div>
+</footer>
+</body></html>

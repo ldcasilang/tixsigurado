@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#001e41",
+                    "surface-container": "#ebeef0",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#9ccaff",
+                    "on-tertiary-fixed": "#022020",
+                    "outline": "#74777f",
+                    "secondary-container": "#46a8fe",
+                    "surface-tint": "#3a5f94",
+                    "tertiary-fixed": "#cae8e8",
+                    "surface-container-low": "#f1f4f6",
+                    "on-surface": "#181c1e",
+                    "tertiary": "#000708",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f7fafc",
+                    "secondary-fixed": "#d0e4ff",
+                    "on-secondary-fixed": "#001d35",
+                    "on-primary-fixed": "#001b3c",
+                    "primary-fixed": "#d5e3ff",
+                    "surface": "#f7fafc",
+                    "on-surface-variant": "#43474e",
+                    "surface-dim": "#d7dadc",
+                    "surface-container-high": "#e5e9eb",
+                    "inverse-surface": "#2d3133",
+                    "primary": "#000614",
+                    "on-secondary-container": "#003c65",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "background": "#f7fafc",
+                    "on-primary-container": "#6487bf",
+                    "on-primary": "#ffffff",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#304b4c",
+                    "on-secondary-fixed-variant": "#00497a",
+                    "inverse-primary": "#a7c8ff",
+                    "tertiary-container": "#042324",
+                    "on-background": "#181c1e",
+                    "on-primary-fixed-variant": "#1f477b",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#aecccc",
+                    "surface-variant": "#e0e3e5",
+                    "secondary": "#0062a1",
+                    "inverse-on-surface": "#eef1f3",
+                    "on-tertiary-container": "#6f8c8c",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#a7c8ff",
+                    "outline-variant": "#c4c6cf"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Public Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .scanner-viewfinder {
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-black text-white font-body selection:bg-secondary-container h-screen overflow-hidden">
+<!-- Full Screen Camera Interface (Simulation) -->
+<div class="fixed inset-0 z-0">
+<div class="absolute inset-0 bg-slate-900 overflow-hidden">
+<!-- Simulated Camera Feed -->
+<img class="w-full h-full object-cover opacity-60 brightness-50" data-alt="blurred POV of a dark concert venue with colorful stage lights in the background, simulating a camera view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBttMFXlKGgeSBmRs1qM0yHlQW4kwcXN7ZX8wVA7hGlbQH6J6fgxDG8AEBj7yMNvO6ZPwnVhiytnwcEyzZ7pxvlKaGSZwhPH2_P2yW8wBxBiYWsf7CGUv0QTlBZv0Zogfscg0s3BGMfu3wNs4UNjIi-sWaUsV5o6cEovYSUrlJ552SRKKWx85ma7umvl2LPO0nyg0fSlJp0ceK9uJXdl0yFTt8Y6HDkRasvCQYJzctYxh3aNL34OHXQoXDfvIWruiyK4UG-XoW2POU"/>
+</div>
+<!-- Scanning Overlay UI -->
+<div class="absolute inset-0 flex flex-col items-center justify-between z-10 py-12 px-6">
+<!-- Header: Institutional Context -->
+<div class="w-full flex justify-between items-center bg-black/40 backdrop-blur-md p-4 rounded-xl border border-white/10">
+<div class="flex flex-col">
+<span class="text-xs uppercase tracking-widest text-secondary-fixed-dim font-bold">Organizer Mode</span>
+<h1 class="font-headline font-black text-xl tracking-tighter text-white">TixSigurado</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-secondary-container/20 px-3 py-1 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-secondary-container" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="text-[10px] font-bold text-secondary-fixed">ENCRYPTED</span>
+</div>
+<button class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-white">close</span>
+</button>
+</div>
+</div>
+<!-- Viewfinder -->
+<div class="relative w-72 h-72">
+<div class="scanner-viewfinder absolute inset-0 rounded-3xl border-2 border-white/40"></div>
+<!-- Corner Accents -->
+<div class="absolute -top-1 -left-1 w-12 h-12 border-t-4 border-l-4 border-secondary-container rounded-tl-2xl"></div>
+<div class="absolute -top-1 -right-1 w-12 h-12 border-t-4 border-r-4 border-secondary-container rounded-tr-2xl"></div>
+<div class="absolute -bottom-1 -left-1 w-12 h-12 border-b-4 border-l-4 border-secondary-container rounded-bl-2xl"></div>
+<div class="absolute -bottom-1 -right-1 w-12 h-12 border-b-4 border-r-4 border-secondary-container rounded-br-2xl"></div>
+<!-- Animated Scan Line Placeholder -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full flex flex-col items-center gap-2">
+<span class="material-symbols-outlined text-white/50 text-4xl">qr_code_scanner</span>
+<p class="text-white/60 text-xs font-medium tracking-wide">ALIGINING TICKET...</p>
+</div>
+</div>
+<!-- Controls -->
+<div class="w-full space-y-6">
+<div class="flex justify-center gap-8">
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-black/50 border border-white/20 flex items-center justify-center group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-2xl">flashlight_on</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-white/70">Torch</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-black/50 border border-white/20 flex items-center justify-center group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-2xl">history</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-white/70">Recent</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-black/50 border border-white/20 flex items-center justify-center group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-2xl">edit</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-white/70">Manual</span>
+</button>
+</div>
+<div class="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-2xl">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-xs font-bold uppercase text-white/50 tracking-widest">Scanner Stats</h2>
+<span class="text-xs font-bold text-secondary-container">GATE 04 • SOUTH</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col">
+<span class="text-2xl font-headline font-black">1,428</span>
+<span class="text-[10px] text-white/40 uppercase font-bold">Checked In</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="text-2xl font-headline font-black text-white/40">3,000</span>
+<span class="text-[10px] text-white/40 uppercase font-bold">Total Capacity</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SCAN RESULT OVERWAY (SUCCESS STATE - VISIBLE BY DEFAULT FOR DEMO) -->
+<div class="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
+<div class="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] flex flex-col items-center">
+<!-- Result Banner (Success) -->
+<div class="w-full bg-[#00C853] py-8 flex flex-col items-center justify-center gap-4">
+<div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-5xl text-[#00C853]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="text-center">
+<h3 class="text-white font-headline font-black text-2xl tracking-tight">Valid Ticket</h3>
+<p class="text-white/80 font-bold text-sm tracking-widest uppercase">Verified on Blockchain</p>
+</div>
+</div>
+<!-- Content Area -->
+<div class="p-8 w-full bg-white space-y-6">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">Attendee</p>
+<p class="text-xl font-headline font-bold text-on-surface tracking-tight">MARCUS R. CHEN</p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">Section</p>
+<p class="text-lg font-headline font-bold text-on-surface">VIP PIT-A</p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">Seat</p>
+<p class="text-lg font-headline font-bold text-on-surface">GA-142</p>
+</div>
+</div>
+<!-- Trust Badge Component -->
+<div class="bg-secondary-container/10 p-3 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">shield</span>
+<div>
+<p class="text-[10px] font-bold text-secondary uppercase">Signature Hash</p>
+<p class="text-[10px] font-mono text-secondary-container truncate w-40">0x742d35Cc6634C0532925a3b844Bc454e4438f44e</p>
+</div>
+</div>
+<span class="text-[8px] font-black text-secondary/40">10:42:01 AM</span>
+</div>
+<button class="w-full bg-on-surface text-white font-bold py-5 rounded-2xl flex items-center justify-center gap-2 hover:bg-primary-container transition-colors shadow-xl">
+<span class="material-symbols-outlined text-xl">camera_alt</span>
+                    SCAN NEXT
+                </button>
+</div>
+</div>
+</div>
+<!-- ERROR STATE (INACTIVE IN DEMO) - Provided for structure reference -->
+<!-- 
+    <div class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-black/60 backdrop-blur-md">
+        <div class="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center border-4 border-error">
+            <div class="w-full bg-error py-8 flex flex-col items-center justify-center gap-4">
+                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg">
+                    <span class="material-symbols-outlined text-5xl text-error" style="font-variation-settings: 'FILL' 1;">cancel</span>
+                </div>
+                <div class="text-center">
+                    <h3 class="text-white font-headline font-black text-2xl tracking-tight">Invalid Ticket</h3>
+                    <p class="text-white/80 font-bold text-sm tracking-widest uppercase">Already Checked In</p>
+                </div>
+            </div>
+            <div class="p-8 w-full space-y-6">
+                <div class="p-4 bg-error-container/20 border border-error/20 rounded-xl">
+                    <p class="text-sm font-bold text-error leading-relaxed text-center">
+                        This ticket was scanned at Gate 02 (North Entrance) at 10:15 AM. Deny entry.
+                    </p>
+                </div>
+                <button class="w-full bg-error text-white font-bold py-5 rounded-2xl">DISMISS & SCAN NEXT</button>
+            </div>
+        </div>
+    </div> 
+    -->
+</body></html>

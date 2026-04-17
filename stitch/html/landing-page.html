@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+/* 🌊 BRAND BACKGROUND */
+:root {
+  --primary-dark: #031042;
+  --blue-1: #147DE1;
+  --blue-2: #B1E5F5;
+}
+
+/* 🧊 GLASS EFFECT */
+.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ✨ ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.fade-up {
+  animation: fadeUp 0.8s ease-out both;
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* 🌈 GRADIENT TEXT */
+.gradient-text {
+  background: linear-gradient(90deg, #147DE1, #B1E5F5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+</style>
+</head>
+
+<body class="bg-[#f6f9ff] font-[Inter] text-[#031042]">
+
+<!-- NAVBAR -->
+<nav class="sticky top-0 z-50 glass flex justify-between items-center px-8 py-4 shadow-md">
+
+  <div class="flex items-center gap-3">
+
+    <!-- 🧩 LOGO PLACEHOLDER -->
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#147DE1] to-[#B1E5F5] flex items-center justify-center shadow-md">
+      <span class="text-white font-bold text-sm">TS</span>
+    </div>
+
+    <span class="font-black text-xl text-[#031042]">TixSigurado</span>
+  </div>
+
+  <div class="hidden md:flex gap-8 font-medium">
+    <a href="#" class="hover:text-[#147DE1]">Explore</a>
+    <a href="#">My Tickets</a>
+    <a href="#">Resell</a>
+    <a href="#">Organizer</a>
+  </div>
+
+  <button class="px-5 py-2 rounded-md text-white font-bold bg-[#031042] hover:opacity-90 transition">
+    Connect Wallet
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="px-8 py-24 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+
+  <div class="space-y-6 fade-up">
+    <h1 class="text-5xl font-black leading-tight">
+      <span class="gradient-text">Trustless Ticketing</span><br/>
+      built for the future.
+    </h1>
+
+    <p class="text-lg text-slate-600">
+      Blockchain-powered ticketing system with secure ownership, resale protection, and instant verification.
+    </p>
+
+    <div class="flex gap-4">
+      <button class="px-6 py-3 rounded-md bg-gradient-to-r from-[#147DE1] to-[#B1E5F5] text-white font-bold hover:scale-105 transition">
+        Explore Events
+      </button>
+
+      <button class="px-6 py-3 rounded-md border border-[#147DE1] text-[#031042] hover:bg-blue-50 transition">
+        How it works
+      </button>
+    </div>
+  </div>
+
+  <!-- HERO CARD -->
+  <div class="float glass rounded-3xl p-8 shadow-xl">
+    <div class="flex justify-between">
+      <div>
+        <p class="text-xs text-slate-500">VIP ACCESS</p>
+        <h3 class="text-xl font-bold">Ethereal Nights</h3>
+      </div>
+
+      <div class="w-10 h-10 rounded-lg bg-[#031042]"></div>
+    </div>
+
+    <div class="mt-8">
+      <div class="w-full h-40 bg-gradient-to-br from-[#147DE1] to-[#B1E5F5] rounded-xl opacity-80"></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- FEATURES -->
+<section class="px-8 py-24 bg-white">
+
+  <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+
+    <div class="glass p-6 rounded-2xl fade-up hover:scale-105 transition">
+      <h3 class="font-bold text-lg">Wallet Login</h3>
+      <p class="text-slate-500 mt-2">Secure Web3 authentication.</p>
+    </div>
+
+    <div class="glass p-6 rounded-2xl fade-up hover:scale-105 transition">
+      <h3 class="font-bold text-lg">NFT Tickets</h3>
+      <p class="text-slate-500 mt-2">Own your tickets fully on-chain.</p>
+    </div>
+
+    <div class="glass p-6 rounded-2xl fade-up hover:scale-105 transition">
+      <h3 class="font-bold text-lg">Verified Entry</h3>
+      <p class="text-slate-500 mt-2">QR + blockchain validation.</p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CTA -->
+<section class="px-8 py-24 text-center">
+
+  <div class="max-w-3xl mx-auto glass p-12 rounded-3xl">
+
+    <h2 class="text-3xl font-black gradient-text">Ready to upgrade ticketing?</h2>
+    <p class="text-slate-600 mt-4">Join the next generation of secure event access.</p>
+
+    <button class="mt-8 px-8 py-4 rounded-md bg-[#031042] text-white font-bold hover:scale-105 transition">
+      Get Started
+    </button>
+
+  </div>
+
+</section>
+
+</body>
+</html>
