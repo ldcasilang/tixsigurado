@@ -35,9 +35,6 @@ TixSigurado ("Tix" + "Sigurado" — Filipino for "certain/guaranteed") is a Web3
 **Organizer Panel**
 ![Organizer](screenshots/organizer.png)
 
-**Wallet Connect**
-![Connect](screenshots/connect.png)
-
 ---
 
 ## Tech Stack
