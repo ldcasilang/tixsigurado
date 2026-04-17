@@ -20,7 +20,7 @@ export default function Marketplace() {
     <div className="bg-[#031042] font-body text-white min-h-screen overflow-x-hidden">
       <Navbar active="marketplace" />
       <StatusBar />
-      <main className="max-w-7xl mx-auto px-8 py-12 relative">
+      <main className="max-w-7xl mx-auto px-8 py-12 pt-36 relative">
         {/* Animated gradient orbs */}
         <div className="absolute top-20 -left-40 w-96 h-96 bg-[#147DE1] rounded-full mix-blend-screen filter blur-[140px] opacity-20 animate-pulse pointer-events-none" />
         <div className="absolute bottom-20 -right-40 w-96 h-96 bg-[#B1E5F5] rounded-full mix-blend-screen filter blur-[140px] opacity-20 animate-pulse delay-1000 pointer-events-none" />

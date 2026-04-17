@@ -17,19 +17,26 @@ TixSigurado ("Tix" + "Sigurado" — Filipino for "certain/guaranteed") is a Web3
 
 ## Screenshots
 
-> Add your app screenshots below. Replace the placeholder paths with actual image files inside a `/screenshots` folder.
+**Landing Page**
+![Landing](screenshots/landing.png)
 
-| Landing Page | Marketplace |
-|---|---|
-| ![Landing](screenshots/landing.png) | ![Marketplace](screenshots/marketplace.png) |
+**Marketplace**
+![Marketplace](screenshots/marketplace.png)
 
-| Ticket Details | Gate Scanner |
-|---|---|
-| ![Ticket Details](screenshots/ticket-details.png) | ![Scanner](screenshots/scanner.png) |
+**My Tickets Page**
+![My Tickets](screenshots/my-ticket.png)
 
-| Organizer Panel | Wallet Connect |
-|---|---|
-| ![Organizer](screenshots/organizer.png) | ![Connect](screenshots/connect.png) |
+**Ticket Details**
+![Ticket Details](screenshots/ticket-details.png)
+
+**Gate Scanner**
+![Scanner](screenshots/scanner.png)
+
+**Organizer Panel**
+![Organizer](screenshots/organizer.png)
+
+**Wallet Connect**
+![Connect](screenshots/connect.png)
 
 ---
 
