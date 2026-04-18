@@ -1,0 +1,1 @@
+/Users/ladydianecasilang/Desktop/tixsigurado/target/wasm32-unknown-unknown/release/libtixsigurado.rlib: /Users/ladydianecasilang/Desktop/tixsigurado/contract/src/lib.rs /Users/ladydianecasilang/Desktop/tixsigurado/contract/src/test.rs
