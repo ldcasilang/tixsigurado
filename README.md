@@ -17,6 +17,9 @@ TixSigurado ("Tix" + "Sigurado" — Filipino for "certain/guaranteed") is a Web3
 
 ## Screenshots
 
+**Contract Deployment**
+![Contract](screenshots/contract.png)
+
 **Landing Page**
 ![Landing](screenshots/landing.png)
 
