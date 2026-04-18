@@ -5,7 +5,18 @@ import {
   shortenAddress,
   checkFreighterInstalled,
 } from '../lib/freighter';
-import { createTicket, transferTicket } from '../lib/soroban';
+import {
+  createTicket,
+  transferTicket,
+  listForResale as sorobanListForResale,
+  buyFromResale,
+  cancelListing as sorobanCancelListing,
+  markTicketUsed,
+  validateTicket,
+  getUserTicketsFromChain,
+  getMarketplaceListingsFromChain,
+  ORGANIZER_ADDRESS,
+} from '../lib/soroban';
 
 const AppContext = createContext(null);
 
@@ -54,72 +65,41 @@ export const EVENTS = [
   },
 ];
 
-// Global ticket ledger — analogous to on-chain state.
-// owner: null means not yet assigned (assigned on wallet connect for demo seeds).
-// TIX-DEMO004 always belongs to DEMO_OTHER_WALLET — used to demonstrate ownership mismatch.
-const INITIAL_REGISTRY = {
-  'TIX-DEMO001': {
-    ticketId: 'TIX-DEMO001', eventName: 'Hackathon Manila 2026', tier: 'VIP Developer Zone',
-    date: 'Oct 24, 2026', status: 'valid', txHash: 'A3F7C9B2D1E4F8A0B5C6D2E3F1A4B7C8',
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    image: TICKET_IMAGES[0], location: 'Manila Convention Center',
-    seatRow: 'VIP-042', price: '0.05 XLM', maxResale: '0.055 XLM', maxResaleXLM: 0.055,
-    transfers: 0, maxTransfers: 2, owner: null,
-  },
-  'TIX-DEMO002': {
-    ticketId: 'TIX-DEMO002', eventName: 'Neon Nights World Tour', tier: 'Floor B2, Row 4',
-    date: 'Nov 12, 2026', status: 'valid', txHash: '9B2D1E4F8A0C3F7A5C6D2E3B1A4B7F8C',
-    createdAt: new Date(Date.now() - 172800000).toISOString(),
-    image: TICKET_IMAGES[1], location: 'Araneta Coliseum, Quezon City',
-    seatRow: 'Floor B2-R4', price: '0.03 XLM', maxResale: '0.033 XLM', maxResaleXLM: 0.033,
-    transfers: 1, maxTransfers: 2, owner: null,
-  },
-  'TIX-DEMO003': {
-    ticketId: 'TIX-DEMO003', eventName: 'Tech Summit 2025', tier: 'Standard Admission',
-    date: 'Dec 01, 2025', status: 'used', txHash: 'C7D8E9F0A1B2C3D4E5F6A7B8C9D0E1F2',
-    createdAt: new Date(Date.now() - 2592000000).toISOString(),
-    image: TICKET_IMAGES[2], location: 'SM Mall of Asia Arena',
-    seatRow: 'STD-108', price: '0.02 XLM', maxResale: '0 XLM', maxResaleXLM: 0,
-    transfers: 0, maxTransfers: 0, owner: null,
-  },
-  // This ticket ALWAYS belongs to a different wallet — used for ownership mismatch demo
-  'TIX-DEMO004': {
-    ticketId: 'TIX-DEMO004', eventName: 'Hackathon Manila 2026', tier: 'General Admission',
-    date: 'Oct 24, 2026', status: 'valid', txHash: 'D4E5F6A7B8C9D0E1F2A3B4C5D6E7F8A9',
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    image: TICKET_IMAGES[0], location: 'Manila Convention Center',
-    seatRow: 'GA-009', price: '0.05 XLM', maxResale: '0.055 XLM', maxResaleXLM: 0.055,
-    transfers: 0, maxTransfers: 2, owner: DEMO_OTHER_WALLET,
-  },
-  // Pre-seeded marketplace ticket owned by another wallet
-  'TIX-MKT001': {
-    ticketId: 'TIX-MKT001', eventName: 'Neon Nights World Tour', tier: 'VIP Floor Access',
-    date: 'Nov 12, 2026', status: 'listed', txHash: 'F1E2D3C4B5A697886950413F1E2D3C4B',
-    createdAt: new Date(Date.now() - 172800000).toISOString(),
-    image: TICKET_IMAGES[1], location: 'Araneta Coliseum, Quezon City',
-    seatRow: 'VIP-001', price: '0.03 XLM', maxResale: '0.033 XLM', maxResaleXLM: 0.033,
-    transfers: 0, maxTransfers: 2, owner: DEMO_OTHER_WALLET,
-  },
-};
+const INITIAL_REGISTRY = {};
 
-const INITIAL_MARKETPLACE = [
-  {
-    listingId: 'LST-SEED001',
-    ticketId: 'TIX-MKT001',
-    sellerWallet: DEMO_OTHER_WALLET,
-    priceXLM: 0.03,
-    listedAt: new Date(Date.now() - 3600000).toISOString(),
-  },
-];
+const INITIAL_MARKETPLACE = [];
 
 export function AppProvider({ children }) {
   const [wallet, setWallet] = useState(null);
-  const [xlmBalance, setXlmBalance] = useState(100.00);
-  const [ticketRegistry, setTicketRegistry] = useState(INITIAL_REGISTRY);
-  const [marketplace, setMarketplace] = useState(INITIAL_MARKETPLACE);
+
+  const [xlmBalance, setXlmBalance] = useState(() => {
+    try {
+      const v = localStorage.getItem('tix_balance');
+      return v !== null ? parseFloat(v) : 100.00;
+    } catch { return 100.00; }
+  });
+
+  const [ticketRegistry, setTicketRegistry] = useState(() => {
+    try {
+      const v = localStorage.getItem('tix_registry');
+      return v ? JSON.parse(v) : INITIAL_REGISTRY;
+    } catch { return INITIAL_REGISTRY; }
+  });
+
+  const [marketplace, setMarketplace] = useState(() => {
+    try {
+      const v = localStorage.getItem('tix_marketplace');
+      return v ? JSON.parse(v) : INITIAL_MARKETPLACE;
+    } catch { return INITIAL_MARKETPLACE; }
+  });
+
   const [loading, setLoading] = useState(false);
   const [txStatus, setTxStatus] = useState(null);
   const [hasFreighter, setHasFreighter] = useState(true);
+
+  useEffect(() => { localStorage.setItem('tix_balance', xlmBalance); }, [xlmBalance]);
+  useEffect(() => { localStorage.setItem('tix_registry', JSON.stringify(ticketRegistry)); }, [ticketRegistry]);
+  useEffect(() => { localStorage.setItem('tix_marketplace', JSON.stringify(marketplace)); }, [marketplace]);
 
   useEffect(() => {
     checkFreighterInstalled().then(ok => {
@@ -128,28 +108,72 @@ export function AppProvider({ children }) {
     });
   }, []);
 
-  // Assign demo seed tickets to the connected wallet
-  useEffect(() => {
-    if (wallet) {
-      setTicketRegistry(prev => ({
-        ...prev,
-        'TIX-DEMO001': { ...prev['TIX-DEMO001'], owner: wallet },
-        'TIX-DEMO002': { ...prev['TIX-DEMO002'], owner: wallet },
-        'TIX-DEMO003': { ...prev['TIX-DEMO003'], owner: wallet },
-        // TIX-DEMO004 owner never changes — always DEMO_OTHER_WALLET
-      }));
+  async function loadBlockchainTickets(userAddress) {
+    try {
+      console.log("🔄 Loading tickets from blockchain for:", userAddress);
+      const onChainTickets = await getUserTicketsFromChain(userAddress);
+      console.log("📦 Blockchain tickets:", onChainTickets);
+      
+      if (onChainTickets.length > 0) {
+        setTicketRegistry(prev => {
+          const next = { ...prev };
+          onChainTickets.forEach(ticket => {
+  next[ticket.ticketId] = {
+    ...(prev[ticket.ticketId] || {}),
+    ...ticket
+  };
+});
+          return next;
+        });
+        console.log(`✅ Loaded ${onChainTickets.length} tickets from blockchain`);
+      } else {
+        console.log("⚠️ No blockchain tickets found for this wallet");
+      }
+    } catch (err) {
+      console.error('❌ Failed to load blockchain tickets:', err);
     }
-  }, [wallet]);
+  }
 
-  // Visible tickets for the current wallet
+  async function loadBlockchainMarketplace() {
+    try {
+      const onChainListings = await getMarketplaceListingsFromChain();
+      if (!Array.isArray(onChainListings)) { setMarketplace([]); return; }
+
+      const enriched = onChainListings.map(listing => {
+        const event = EVENTS.find(e => e.name === listing.ticket?.eventName);
+        return {
+          ...listing,
+          ticket: {
+            ...listing.ticket,
+            tier: event?.tier || 'General Admission',
+            date: event?.date || 'See event details',
+            location: event?.location || 'Venue TBA',
+            image: event?.image || listing.ticket?.image || TICKET_IMAGES[0],
+          },
+        };
+      });
+
+      setMarketplace(enriched);
+    } catch (err) {
+      console.error('Failed to load blockchain listings:', err);
+      setMarketplace([]);
+    }
+  }
+
+ useEffect(() => {
+  if (wallet) {
+    (async () => {
+      await loadBlockchainTickets(wallet);
+      await loadBlockchainMarketplace();
+    })();
+  }
+}, [wallet]);
+
   const tickets = wallet
-    ? Object.values(ticketRegistry).filter(t => t.owner === wallet)
-    : [];
+  ? Object.values(ticketRegistry || {}).filter(t => t && t.owner === wallet)
+  : [];
 
-  // Marketplace enriched with ticket data
-  const marketplaceListings = marketplace
-    .map(l => ({ ...l, ticket: ticketRegistry[l.ticketId] }))
-    .filter(l => l.ticket);
+  const marketplaceListings = marketplace;
 
   function showStatus(type, msg) {
     setTxStatus({ type, msg });
@@ -180,16 +204,26 @@ export function AppProvider({ children }) {
   async function buyTicket({ eventId, eventName, tier, date, location, priceXLM = 0.05 }) {
     if (!wallet) { showStatus('error', 'Connect your wallet first'); return null; }
     if (xlmBalance < priceXLM) {
-      showStatus('error', `Insufficient XLM balance — need ${priceXLM} XLM, have ${xlmBalance.toFixed(4)} XLM. Transaction rejected by network.`);
+      showStatus('error', `Insufficient XLM balance — need ${priceXLM} XLM, have ${xlmBalance.toFixed(4)} XLM.`);
       return null;
     }
     setLoading(true);
     showStatus('pending', 'Submitting transaction to Stellar Testnet...');
     try {
-      const result = await createTicket({ eventName, ownerAddress: wallet });
+      const result = await createTicket({
+        eventName,
+        ownerAddress: wallet,
+        priceXLM,
+        maxResaleXLM: parseFloat((priceXLM * 1.1).toFixed(4)),
+        maxTransfers: 2,
+      });
+      
+      if (!result.success) throw new Error('Transaction failed');
+      
       const event = EVENTS.find(e => e.eventId === eventId);
       const newTicket = {
         ticketId: result.ticketId,
+        onChainId: result.onChainId,
         eventName,
         tier: tier || 'General Admission',
         date: date || new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' }),
@@ -218,78 +252,51 @@ export function AppProvider({ children }) {
     }
   }
 
-  // Alias for OrganizerPanel compatibility
   const mintTicket = ({ eventName, tier, date, location }) =>
     buyTicket({ eventName, tier, date, location, priceXLM: 0.05 });
 
-  function listForResale(ticketId, priceXLM) {
+  async function listForResale(ticketId, priceXLM) {
     const ticket = ticketRegistry[ticketId];
-    if (!ticket) { showStatus('error', 'Ticket not found on ledger'); return false; }
-    if (ticket.owner !== wallet) { showStatus('error', 'Unauthorized — you do not own this ticket'); return false; }
-    if (ticket.status === 'used') { showStatus('error', 'Cannot resell a used ticket — smart contract rule enforced'); return false; }
-    if (ticket.status === 'listed') { showStatus('error', 'Ticket is already listed on the marketplace'); return false; }
+    if (!ticket) { showStatus('error', 'Ticket not found'); return false; }
+    if (ticket.owner !== wallet) { showStatus('error', 'You do not own this ticket'); return false; }
+    if (ticket.status === 'used') { showStatus('error', 'Cannot resell a used ticket'); return false; }
+    if (ticket.status === 'listed') { showStatus('error', 'Ticket already listed'); return false; }
     if (ticket.transfers >= ticket.maxTransfers) {
-      showStatus('error', `Transfer limit reached (${ticket.maxTransfers} max) — contract blocks further resale`);
+      showStatus('error', `Transfer limit reached (${ticket.maxTransfers} max)`);
       return false;
     }
     if (ticket.maxResaleXLM > 0 && priceXLM > ticket.maxResaleXLM) {
-      showStatus('error', `Price ${priceXLM} XLM exceeds resale cap of ${ticket.maxResaleXLM} XLM — scalping protection active`);
-      return false;
-    }
-    const listingId = `LST-${Date.now().toString(36).toUpperCase()}`;
-    setTicketRegistry(prev => ({
-      ...prev,
-      [ticketId]: { ...prev[ticketId], status: 'listed' },
-    }));
-    setMarketplace(prev => [
-      ...prev,
-      { listingId, ticketId, sellerWallet: wallet, priceXLM, listedAt: new Date().toISOString() },
-    ]);
-    showStatus('success', `Listed for ${priceXLM} XLM — resale cap enforced by smart contract`);
-    return true;
-  }
-
-  function cancelListing(listingId) {
-    const listing = marketplace.find(l => l.listingId === listingId);
-    if (!listing || listing.sellerWallet !== wallet) return false;
-    setTicketRegistry(prev => ({
-      ...prev,
-      [listing.ticketId]: { ...prev[listing.ticketId], status: 'valid' },
-    }));
-    setMarketplace(prev => prev.filter(l => l.listingId !== listingId));
-    showStatus('success', 'Listing cancelled — ticket returned to your wallet');
-    return true;
-  }
-
-  async function buyFromMarket(listingId) {
-    const listing = marketplace.find(l => l.listingId === listingId);
-    if (!listing) { showStatus('error', 'Listing no longer available'); return false; }
-    if (listing.sellerWallet === wallet) { showStatus('error', 'You cannot purchase your own listing'); return false; }
-    if (xlmBalance < listing.priceXLM) {
-      showStatus('error', `Insufficient XLM — need ${listing.priceXLM} XLM, have ${xlmBalance.toFixed(4)} XLM`);
+      showStatus('error', `Price ${priceXLM} XLM exceeds resale cap of ${ticket.maxResaleXLM} XLM`);
       return false;
     }
     setLoading(true);
-    showStatus('pending', 'Processing peer-to-peer transfer on Stellar Testnet...');
+    showStatus('pending', 'Listing ticket on marketplace...');
     try {
-      const result = await transferTicket({
-        ticketId: listing.ticketId,
-        fromAddress: listing.sellerWallet,
-        toAddress: wallet,
+      await sorobanListForResale({ 
+        onChainId: ticket.onChainId, 
+        signerAddress: wallet, 
+        priceXLM 
       });
-      setTicketRegistry(prev => ({
-        ...prev,
-        [listing.ticketId]: {
-          ...prev[listing.ticketId],
-          owner: wallet,
-          status: 'valid',
-          transfers: (prev[listing.ticketId]?.transfers || 0) + 1,
-          txHash: result.txHash,
-        },
+      
+      // Create local listing
+      const listingId = `LST-${Date.now().toString(36).toUpperCase()}`;
+      const newListing = {
+        listingId,
+        ticketId: ticket.ticketId,
+        onChainId: ticket.onChainId,
+        sellerWallet: wallet,
+        priceXLM,
+        listedAt: new Date().toISOString(),
+        ticket: { ...ticket, onChainId: ticket.onChainId },
+      };
+      
+      setTicketRegistry(prev => ({ 
+        ...prev, 
+        [ticketId]: { ...prev[ticketId], status: 'listed' } 
       }));
-      setMarketplace(prev => prev.filter(l => l.listingId !== listingId));
-      setXlmBalance(prev => parseFloat((prev - listing.priceXLM).toFixed(4)));
-      showStatus('success', `Purchased! Ownership transferred on-chain. TX: ${result.txHash.slice(0, 12)}…`);
+      
+      setMarketplace(prev => [...prev, newListing]);
+      showStatus('success', `Listed for ${priceXLM} XLM`);
       return true;
     } catch (err) {
       showStatus('error', err.message);
@@ -299,79 +306,176 @@ export function AppProvider({ children }) {
     }
   }
 
-  // QR validation — mirrors on-chain ownership + status checks.
-  // Checks: existence → used → ownership → listed
-  function validateQR(ticketId) {
-    const ticket = ticketRegistry[ticketId];
-    if (!ticket) {
-      return {
-        isValid: false,
-        reason: 'TICKET_NOT_FOUND',
-        message: 'Ticket ID does not exist on Stellar Testnet — possible fake QR',
-      };
+  async function cancelListing(listingId) {
+    const listing = marketplace.find(l => l.listingId === listingId);
+    if (!listing || listing.sellerWallet !== wallet) return false;
+    const ticket = ticketRegistry[listing.ticketId];
+    
+    if (!ticket?.onChainId) {
+      // Fallback for demo listings
+      setTicketRegistry(prev => ({ 
+        ...prev, 
+        [listing.ticketId]: { ...prev[listing.ticketId], status: 'valid' } 
+      }));
+      setMarketplace(prev => prev.filter(l => l.listingId !== listingId));
+      showStatus('success', 'Listing cancelled');
+      return true;
     }
-    if (ticket.status === 'used') {
-      return {
-        isValid: false,
-        reason: 'ALREADY_USED',
-        message: 'Ticket already scanned at entry — duplicate blocked by smart contract',
-        ticket,
-      };
+    
+    setLoading(true);
+    showStatus('pending', 'Cancelling listing...');
+    try {
+      await sorobanCancelListing({ 
+        onChainId: ticket.onChainId, 
+        signerAddress: wallet 
+      });
+      
+      setTicketRegistry(prev => ({ 
+        ...prev, 
+        [listing.ticketId]: { ...prev[listing.ticketId], status: 'valid' } 
+      }));
+      setMarketplace(prev => prev.filter(l => l.listingId !== listingId));
+      showStatus('success', 'Listing cancelled');
+      return true;
+    } catch (err) {
+      showStatus('error', err.message);
+      return false;
+    } finally {
+      setLoading(false);
     }
-    if (wallet && ticket.owner !== wallet) {
-      return {
-        isValid: false,
-        reason: 'OWNERSHIP_MISMATCH',
-        message: `QR belongs to a different wallet (${ticket.owner?.slice(0, 8)}…${ticket.owner?.slice(-4)}) — not the presenter`,
-        ticket,
-      };
-    }
-    if (ticket.status === 'listed') {
-      return {
-        isValid: false,
-        reason: 'LISTED_FOR_RESALE',
-        message: 'Ticket is currently listed for resale — ownership transfer pending',
-        ticket,
-      };
-    }
-    return {
-      isValid: true,
-      reason: 'VALID',
-      message: 'Ticket ownership verified on Stellar Testnet — allow entry',
-      ticket,
-    };
   }
 
-  function markUsed(ticketId) {
-    setTicketRegistry(prev => ({
-      ...prev,
-      [ticketId]: { ...prev[ticketId], status: 'used' },
-    }));
-    showStatus('success', 'Checked in — ticket permanently marked as used on Stellar Testnet');
+  async function buyFromMarket(listingId) {
+    const listing = marketplace.find(l => l.listingId === listingId);
+    if (!listing) { showStatus('error', 'Listing not found'); return false; }
+    if (listing.sellerWallet === wallet) { showStatus('error', 'Cannot buy your own listing'); return false; }
+    if (xlmBalance < listing.priceXLM) {
+      showStatus('error', `Insufficient XLM — need ${listing.priceXLM} XLM`);
+      return false;
+    }
+
+    setLoading(true);
+    showStatus('pending', 'Waiting for Freighter confirmation…');
+    try {
+      await buyFromResale({
+        onChainId: listing.onChainId,
+        buyerAddress: wallet,
+      });
+
+      const newTicket = {
+        ...listing.ticket,
+        ticketId: listing.ticketId,
+        onChainId: listing.onChainId,
+        owner: wallet,
+        status: 'valid',
+        transfers: (listing.ticket?.transfers || 0) + 1,
+        seatRow: `GA-${Math.floor(Math.random() * 999).toString().padStart(3, '0')}`,
+        txHash: `resale-${listingId}`,
+        createdAt: new Date().toISOString(),
+      };
+
+      setTicketRegistry(prev => ({ ...prev, [listing.ticketId]: newTicket }));
+      setMarketplace(prev => prev.filter(l => l.listingId !== listingId));
+      setXlmBalance(prev => parseFloat((prev - listing.priceXLM).toFixed(4)));
+      showStatus('success', 'Ticket purchased! Check My Tickets.');
+      return true;
+    } catch (err) {
+      showStatus('error', err.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function validateQR(ticketId) {
+    const ticket = ticketRegistry[ticketId];
+    if (!ticket) {
+      return { isValid: false, reason: 'TICKET_NOT_FOUND', message: 'Ticket not found', ticket };
+    }
+    
+    if (ticket.onChainId) {
+      try {
+        const result = await validateTicket({
+          ticketId,
+          onChainId: ticket.onChainId,
+          claimerAddress: wallet || ORGANIZER_ADDRESS,
+          status: ticket.status,
+        });
+        return {
+          isValid: result.status === 'valid',
+          reason: result.status.toUpperCase(),
+          message: result.status === 'valid' ? 'Ticket is valid' : `Ticket status: ${result.status}`,
+          ticket,
+        };
+      } catch (err) {
+        console.warn('On-chain validation failed, using local state:', err);
+      }
+    }
+    
+    if (ticket.status === 'used') {
+      return { isValid: false, reason: 'ALREADY_USED', message: 'Ticket already used', ticket };
+    }
+    if (wallet && ticket.owner !== wallet) {
+      return { isValid: false, reason: 'OWNERSHIP_MISMATCH', message: 'Wrong wallet', ticket };
+    }
+    if (ticket.status === 'listed') {
+      return { isValid: false, reason: 'LISTED_FOR_RESALE', message: 'Ticket listed for resale', ticket };
+    }
+    return { isValid: true, reason: 'VALID', message: 'Ticket is valid', ticket };
+  }
+
+  async function markUsed(ticketId) {
+    const ticket = ticketRegistry[ticketId];
+    if (ticket?.onChainId) {
+      try {
+        await markTicketUsed({ onChainId: ticket.onChainId, signerAddress: wallet });
+      } catch (err) {
+        console.warn('Contract mark_ticket_used failed:', err.message);
+      }
+    }
+    setTicketRegistry(prev => ({ ...prev, [ticketId]: { ...prev[ticketId], status: 'used' } }));
+    showStatus('success', 'Ticket marked as used');
   }
 
   async function doTransfer(ticketId, toAddress) {
     const ticket = ticketRegistry[ticketId];
     if (!ticket) { showStatus('error', 'Ticket not found'); return false; }
-    if (ticket.owner !== wallet) { showStatus('error', 'Unauthorized — you do not own this ticket'); return false; }
-    if (ticket.status === 'used') {
-      showStatus('error', 'Cannot transfer a used ticket — blockchain rule enforced');
-      return false;
-    }
+    if (ticket.owner !== wallet) { showStatus('error', 'You do not own this ticket'); return false; }
+    if (ticket.status === 'used') { showStatus('error', 'Cannot transfer used ticket'); return false; }
+    
     setLoading(true);
-    showStatus('pending', 'Processing transfer on Stellar Testnet...');
+    showStatus('pending', 'Transferring ticket...');
     try {
-      const result = await transferTicket({ ticketId, fromAddress: wallet, toAddress });
-      setTicketRegistry(prev => ({
-        ...prev,
-        [ticketId]: {
-          ...prev[ticketId],
-          owner: toAddress,
-          transfers: (prev[ticketId].transfers || 0) + 1,
-          txHash: result.txHash,
-        },
-      }));
-      showStatus('success', `Transferred! TX: ${result.txHash.slice(0, 12)}…`);
+      if (ticket.onChainId) {
+        const result = await transferTicket({ 
+          ticketId, 
+          onChainId: ticket.onChainId, 
+          fromAddress: wallet, 
+          toAddress 
+        });
+        
+        setTicketRegistry(prev => ({
+          ...prev,
+          [ticketId]: {
+            ...prev[ticketId],
+            owner: toAddress,
+            transfers: (prev[ticketId].transfers || 0) + 1,
+            txHash: result.txHash,
+          },
+        }));
+      } else {
+        // Demo transfer
+        setTicketRegistry(prev => ({
+          ...prev,
+          [ticketId]: {
+            ...prev[ticketId],
+            owner: toAddress,
+            transfers: (prev[ticketId].transfers || 0) + 1,
+          },
+        }));
+      }
+      
+      showStatus('success', `Transferred!`);
       return true;
     } catch (err) {
       showStatus('error', err.message);
@@ -381,22 +485,25 @@ export function AppProvider({ children }) {
     }
   }
 
-  // Demo utility — lets presenter simulate insufficient balance scenario
   function demoSetBalance(amount) {
     setXlmBalance(amount);
     showStatus('success', `Demo: XLM balance set to ${amount} XLM`);
   }
 
-  // Demo utility — resets seed tickets back to valid for re-demo
   function demoReset() {
-    setTicketRegistry(prev => ({
-      ...prev,
-      'TIX-DEMO001': { ...INITIAL_REGISTRY['TIX-DEMO001'], owner: wallet },
-      'TIX-DEMO002': { ...INITIAL_REGISTRY['TIX-DEMO002'], owner: wallet },
-      'TIX-DEMO003': { ...INITIAL_REGISTRY['TIX-DEMO003'], owner: wallet },
-    }));
+    localStorage.removeItem('tix_balance');
+    localStorage.removeItem('tix_registry');
+    localStorage.removeItem('tix_marketplace');
+    setTicketRegistry({});
+    setMarketplace([]);
     setXlmBalance(100.00);
-    showStatus('success', 'Demo state reset — seed tickets restored');
+    showStatus('success', 'Demo state reset');
+    
+    // Reload blockchain data
+    if (wallet) {
+      loadBlockchainTickets(wallet);
+      loadBlockchainMarketplace();
+    }
   }
 
   return (
@@ -408,6 +515,12 @@ export function AppProvider({ children }) {
       validateQR, markUsed, doTransfer,
       demoSetBalance, demoReset,
       setTxStatus,
+      refreshBlockchain: () => {
+        if (wallet) {
+          loadBlockchainTickets(wallet);
+          loadBlockchainMarketplace();
+        }
+      }
     }}>
       {children}
     </AppContext.Provider>

@@ -233,7 +233,7 @@ export default function MyTickets() {
                   <div className="w-2 h-2 rounded-full bg-gradient-to-r from-emerald-400 to-green-500 animate-pulse" />
                   <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-400 animate-ping opacity-75" />
                 </div>
-                <span className="text-xs text-white/40">Stellar Testnet · Simulated transaction</span>
+                <span className="text-xs text-white/40">Stellar Testnet · On-chain via Freighter</span>
               </div>
             </div>
           </div>
